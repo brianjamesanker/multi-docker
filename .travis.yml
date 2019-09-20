@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t brianjanker/react-test -f ./client/Dockerfile.dev ./client
+
+  script:
+    - docker run brianjanker/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t brianjanker/multi-client ./client
+  - docker build -t brianjanker/multi-nginx ./nginx
+  - docker build -t brianjanker/multi-server ./server
+  - docker build -t brianjanker/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # Take those images and push them to docker hub
+  - docker push brianjanker/multi-client
+  - docker push brianjanker/multi-nginx
+  - docker push brianjanker/multi-server
+  - docker push brianjanker/multi-worker
