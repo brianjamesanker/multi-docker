@@ -20,3 +20,17 @@ after_success:
   - docker push brianjanker/multi-nginx
   - docker push brianjanker/multi-server
   - docker push brianjanker/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: multi-docker
+  env: Multi-Docker-env
+  bucket_name: elasticbeanstalk-us-east-2-730180557028
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id:
+    secure: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
